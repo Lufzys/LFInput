@@ -25,6 +25,11 @@ namespace LFInput
             SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(INPUT)));
         }
 
+        public static bool IsKeyPushedDown(System.Windows.Forms.Keys vKey)
+        {
+            return 0 != (GetAsyncKeyState(vKey) & 0x8000);
+        }
+
         public static void Move(int x, int y)
         {
             INPUT[] inputs = new INPUT[1];
@@ -1150,6 +1155,11 @@ namespace LFInput
                 SM_CONVERTIBLESLATEMODE = 0x2003,
                 SM_SYSTEMDOCKED = 0x2004,
             }
+            #endregion
+
+            #region GetAsyncKeyState
+            [DllImport("user32.dll")]
+            public static extern short GetAsyncKeyState(System.Windows.Forms.Keys vKey);
             #endregion
         }
     }
