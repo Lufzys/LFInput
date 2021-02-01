@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Threading;
 using static LFInput.LFInput.Enums;
 using static LFInput.LFInput.Imports;
 
@@ -41,6 +42,25 @@ namespace LFInput
             SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(INPUT)));
         }
 
+        public static void Click(Buttons button, int sleep = 20, bool humanize = false)
+        {
+            INPUT[] inputs = new INPUT[1];
+            inputs[0].type = (uint)Enums.InputType.MOUSE;
+            inputs[0].U.mi.mouseData = 0;
+            inputs[0].U.mi.dwFlags = (button == Buttons.RIGHT ? MOUSEEVENTF.RIGHTDOWN : MOUSEEVENTF.LEFTDOWN);
+            SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(INPUT)));
+
+            int humanizePtr = 0;
+            if (humanize) { humanizePtr = new Random().Next(1, 10); }
+            Thread.Sleep(sleep + humanizePtr);
+
+            INPUT[] inputs1 = new INPUT[1];
+            inputs1[0].type = (uint)Enums.InputType.MOUSE;
+            inputs1[0].U.mi.mouseData = 0;
+            inputs1[0].U.mi.dwFlags = (button == Buttons.RIGHT ? MOUSEEVENTF.RIGHTUP : MOUSEEVENTF.LEFTUP);
+            SendInput((uint)inputs1.Length, inputs1, Marshal.SizeOf(typeof(INPUT)));
+        }
+
         #region D-XY
         private static DXY GetDXY(int x, int y)
         {
@@ -63,6 +83,12 @@ namespace LFInput
 
         public class Enums
         {
+            public enum Buttons
+            {
+                RIGHT,
+                LEFT
+            }
+
             public enum KeyState
             {
                 DOWN,
